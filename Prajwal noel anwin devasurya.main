@@ -1,0 +1,126 @@
+
+#include <stdio.h>
+
+#define SIZE 7
+
+int main() {
+
+    char map[SIZE][SIZE] = {
+        "#######",
+        "#P....#",
+        "#.###.#",
+        "#X..K.#",
+        "#.#...#",
+        "#....E#",
+        "#######"
+    };
+
+    int playerX = 1, playerY = 1;
+    int lives = 3;
+    int hasKey = 0;
+    int gameOver = 0;
+    int moves = 0;
+
+    char input;
+
+    while (!gameOver) {
+
+        printf("\n===== TREASURE ESCAPE =====\n");
+        printf("Lives: %d | Key: %s\n",
+               lives, hasKey ? "YES" : "NO");
+
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+
+                if (i == playerX && j == playerY)
+                    printf("P ");
+                else
+                    printf("%c ", map[i][j]);
+
+            }
+            printf("\n");
+        }
+
+        printf("\nW = Up | S = Down");
+        printf("\nA = Left | D = Right");
+        printf("\nMove: ");
+
+        scanf(" %c", &input);
+
+        int newX = playerX;
+        int newY = playerY;
+
+        if (input == 'w' || input == 'W')
+            newX--;
+
+        else if (input == 's' || input == 'S')
+            newX++;
+
+        else if (input == 'a' || input == 'A')
+            newY--;
+
+        else if (input == 'd' || input == 'D')
+            newY++;
+
+        else {
+            printf("Invalid movement!\n");
+            continue;
+        }
+
+        // Check boundaries and walls
+        if (map[newX][newY] == '#') {
+            printf("You cannot cross walls!\n");
+            continue;
+        }
+
+        moves++;
+
+        // Check for key
+        if (map[newX][newY] == 'K') {
+            hasKey = 1;
+            map[newX][newY] = '.';
+            printf("\nYou collected the key!\n");
+        }
+
+        // Check for trap
+        else if (map[newX][newY] == 'X') {
+
+            lives--;
+            printf("\nYou stepped on a trap!\n");
+            printf("Lives remaining: %d\n", lives);
+
+            playerX = 1;
+            playerY = 1;
+
+            if (lives == 0) {
+                printf("\nGAME OVER! You lost!\n");
+                gameOver = 1;
+            }
+
+            continue;
+        }
+
+        // Check exit
+        else if (map[newX][newY] == 'E') {
+
+            if (hasKey) {
+                printf("\nYOU ESCAPED THE DUNGEON!\n");
+                printf("Total moves: %d\n", moves);
+                gameOver = 1;
+                continue;
+            }
+
+            else {
+                printf("\nYou need the key to escape!\n");
+                continue;
+            }
+        }
+
+        playerX = newX;
+        playerY = newY;
+    }
+
+    printf("\nThanks for playing!\n");
+
+    return 0;
+}
